@@ -1,0 +1,21 @@
+INSERT INTO poliza (tipo, fecha_creacion)
+VALUES 
+('AUTOS', NOW() AT TIME ZONE 'America/Bogota'),
+('AUTOS', NOW() AT TIME ZONE 'America/Bogota'),
+('HOGAR', NOW() AT TIME ZONE 'America/Bogota'),
+('PYME', NOW() AT TIME ZONE 'America/Bogota');
+
+select * from poliza order by cotizacion asc;
+
+INSERT INTO riesgo (cotizacion, atributos_riesgo)
+VALUES
+(10000,'{"tipo":"vehiculo","placa":"ABC123","valor":30000000}'),
+(10000,'{"tipo":"vehiculo","placa":"DEF456","valor":28000000}'),
+(10000,'{"tipo":"vehiculo","placa":"GHI789","valor":35000000}'),
+(10000,'{"tipo":"vehiculo","placa":"JKL012","valor":22000000}');
+
+select * from riesgo;
+-- Esto selecciona el valor siguiente al configurado
+SELECT setval('secuencia_poliza_autos', 14999, true);
+-- Esto selecciona el valor que se escribe para iniciar
+SELECT setval('secuencia_poliza_autos', 16008, false);
