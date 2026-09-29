@@ -19,7 +19,8 @@ BEGIN
     (NEW.cotizacion, '9393', 'Tipo de reaseguro', '8', 'Habitual'),
     (NEW.cotizacion, '8941', 'Valor gastos de expedición', '5877', NULL),
     (NEW.cotizacion, '7897', 'Poliza comercializada mediante convenio de uso de red', '0', 'No'),
-    (NEW.cotizacion, '4962', 'Ramo Liberty', '20', 'PUAC');
+    (NEW.cotizacion, '4962', 'Ramo Liberty', '20', 'PUAC'),
+    ON CONFLICT (cotizacion, codigo_iaxis) DO NOTHING;
 
     RETURN NEW;
 END;

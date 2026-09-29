@@ -7,6 +7,10 @@ ALTER TYPE seguros_colectivos.estado_proceso_enum ADD VALUE IF NOT EXISTS 'PENDI
 ALTER TYPE seguros_colectivos.estado_proceso_enum ADD VALUE IF NOT EXISTS 'EN_EMISION';
 ALTER TYPE seguros_colectivos.estado_proceso_enum ADD VALUE IF NOT EXISTS 'EMITIDA';
 
+ALTER TYPE seguros_colectivos.etapa_enum ADD VALUE 'INFORMACION_RIESGOS';
+ALTER TYPE seguros_colectivos.etapa_enum ADD VALUE 'RIESGOS';
+ALTER TYPE seguros_colectivos.etapa_enum ADD VALUE 'RESUMEN';
+
 
 -- ============================================
 -- 2. MIGRACIÓN PRINCIPAL

@@ -50,6 +50,7 @@ COMMENT ON TABLE tipo_adjunto IS 'Catálogo para poliza_adjuntos.tipo.';
 -- SECUENCIAS DE PÓLIZA POR TIPO
 -- =====================================================================
 
+--TODO: validar numero de inicio de secuencia con el backend, para que no se repitan cotizaciones entre tipos de póliza.
 CREATE SEQUENCE secuencia_poliza_autos START WITH 10000 INCREMENT BY 1 MINVALUE 10000;
 CREATE SEQUENCE secuencia_poliza_hogar START WITH 20000 INCREMENT BY 1 MINVALUE 20000;
 CREATE SEQUENCE secuencia_poliza_pyme  START WITH 30000 INCREMENT BY 1 MINVALUE 30000;
