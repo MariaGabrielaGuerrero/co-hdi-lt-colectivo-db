@@ -1,5 +1,22 @@
+-- =====================================================================
+-- 04-insert-preguntas-poliza.sql
+-- ACCIÓN: Crea la función fn_insertar_preguntas_por_defecto y el trigger
+--         tr_crear_preguntas_defecto_poliza_update sobre poliza.
+--         Cuando una póliza pasa a estado_proceso = 'EN_REVISION', inserta
+--         automáticamente las 17 preguntas por defecto (códigos iAxis) en
+--         poliza_preguntas. Si alguna ya existe, no la duplica.
+-- EJECUCIÓN: Script completo, en una transacción. Re-ejecutable.
+-- REQUISITO: Ejecutar después de 02-dashboard.sql (usa el estado
+--            EN_REVISION y la columna respuesta / descripcion_respuesta).
+-- =====================================================================
+
+BEGIN;
+
+-- 1. Función que inserta las preguntas por defecto
 CREATE OR REPLACE FUNCTION seguros_colectivos.fn_insertar_preguntas_por_defecto()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
 BEGIN
     -- Insertamos los registros asociados a la nueva cotización (NEW.cotizacion)
     INSERT INTO seguros_colectivos.poliza_preguntas (cotizacion, codigo_iaxis, descripcion, respuesta, descripcion_respuesta) VALUES
@@ -19,23 +36,26 @@ BEGIN
     (NEW.cotizacion, '9393', 'Tipo de reaseguro', '8', 'Habitual'),
     (NEW.cotizacion, '8941', 'Valor gastos de expedición', '5877', NULL),
     (NEW.cotizacion, '7897', 'Poliza comercializada mediante convenio de uso de red', '0', 'No'),
-    (NEW.cotizacion, '4962', 'Ramo Liberty', '20', 'PUAC'),
+    (NEW.cotizacion, '4962', 'Ramo Liberty', '20', 'PUAC')
     ON CONFLICT (cotizacion, codigo_iaxis) DO NOTHING;
 
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 
--- 2. Creamos el nuevo trigger para UPDATE
+-- 2. Trigger AFTER UPDATE: se dispara solo cuando el estado cambia a EN_REVISION
+DROP TRIGGER IF EXISTS tr_crear_preguntas_defecto_poliza_update ON seguros_colectivos.poliza;
 CREATE TRIGGER tr_crear_preguntas_defecto_poliza_update
 AFTER UPDATE ON seguros_colectivos.poliza
 FOR EACH ROW
 WHEN (
-    -- Condición: El estado nuevo es EN_REVISION 
-    NEW.estado_proceso = 'EN_REVISION' 
-    AND 
+    -- Condición: El estado nuevo es EN_REVISION
+    NEW.estado_proceso = 'EN_REVISION'
+    AND
     -- Y el estado anterior era diferente (evita ejecuciones duplicadas)
     OLD.estado_proceso IS DISTINCT FROM NEW.estado_proceso
 )
 EXECUTE FUNCTION seguros_colectivos.fn_insertar_preguntas_por_defecto();
+
+COMMIT;
