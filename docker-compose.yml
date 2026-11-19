@@ -2,8 +2,18 @@ version: "3.9"
 
 services:
   postgres:
-    image: postgres:15
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lt-colectivo-postgres:15-cron
     container_name: postgres_db
+    # pg_cron debe cargarse al arrancar (equivale al parameter group de Aurora)
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=pg_cron
+      - -c
+      - cron.database_name=lt-colectivo-db
     restart: always
     environment:
       POSTGRES_USER: myuser
@@ -14,6 +24,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init:/docker-entrypoint-initdb.d
+      - ./dba:/dba:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U myuser -d lt-colectivo-db"]
       interval: 30s
